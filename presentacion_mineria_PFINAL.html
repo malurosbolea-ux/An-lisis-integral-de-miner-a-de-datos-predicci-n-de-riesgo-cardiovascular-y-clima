@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defensa Práctica Final - María Luisa Ros</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; font-family: 'Montserrat', sans-serif; overflow: hidden; background: #FCE4EC; color: #4A4A4A; }
+        .slide { display: none; height: 100vh; width: 100vw; padding: 40px 80px; box-sizing: border-box; position: relative; animation: fadeIn 0.8s ease; }
+        .slide.active { display: flex; flex-direction: column; justify-content: center; }
+        h1 { font-size: 3rem; color: #880E4F; margin-bottom: 10px; line-height: 1.1; }
+        h2 { font-size: 1.8rem; color: #C2185B; margin-bottom: 20px; font-weight: 300; }
+        p, li { font-size: 1.3rem; line-height: 1.6; color: #5D4037; max-width: 900px; margin-bottom: 15px; }
+        .decor-circle { position: absolute; border-radius: 50%; opacity: 0.1; z-index: -1; }
+        .circle-1 { width: 600px; height: 600px; background: #F48FB1; top: -200px; right: -200px; }
+        .circle-2 { width: 400px; height: 400px; background: #AD1457; bottom: -100px; left: -100px; }
+        .nav-buttons { position: fixed; bottom: 30px; right: 50px; z-index: 100; display: flex; gap: 20px; }
+        button { background: #880E4F; color: white; border: none; padding: 15px 30px; font-size: 1.2rem; border-radius: 30px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(136, 14, 79, 0.3); }
+        button:hover { transform: scale(1.05); }
+        button:disabled { background: #E0E0E0; cursor: not-allowed; }
+        .split-content { display: flex; gap: 40px; align-items: center; width: 100%; height: 75%; }
+        .text-side { flex: 1; }
+        .chart-side { flex: 1.2; height: 100%; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; }
+        .highlight-box { background: white; padding: 25px; border-left: 8px solid #F06292; border-radius: 8px; margin-top: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .code-snippet { background: #263238; color: #80CBC4; padding: 15px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 1rem; margin-top: 20px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="decor-circle circle-1"></div>
+    <div class="decor-circle circle-2"></div>
+
+    <div class="slide active" id="slide1">
+        <h1 style="font-size: 4rem;">Práctica Final:<br>Minería de Datos</h1>
+        <h2>De Datos Crudos a Estrategia Sanitaria</h2>
+        <div style="margin-top: 40px; border-top: 2px solid #F8BBD0; width: 250px; padding-top: 20px;">
+            <p><strong>Alumna:</strong> María Luisa Ros Bolea</p>
+            <p>Máster Big Data e IA | CEU San Pablo</p>
+        </div>
+    </div>
+
+    <div class="slide" id="slide2">
+        <h1>Hoja de Ruta</h1>
+        <p>En los próximos minutos, recorreremos las 3 fases de mi proyecto:</p>
+        <div class="split-content">
+            <div class="text-side">
+                <ol>
+                    <li><strong>Ingeniería de Datos (The Hunt):</strong> API vs Web Scraping.</li>
+                    <li><strong>Calidad del Dato (The Lab):</strong> Limpieza médica y SMOTE.</li>
+                    <li><strong>Inteligencia de Negocio (The Value):</strong> Estrategia basada en datos.</li>
+                </ol>
+            </div>
+            <div class="chart-side" style="background: transparent; box-shadow: none;">
+                <div style="font-size: 10rem; color: #F8BBD0; font-weight: 800;">3</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide3">
+        <h1>Fase 1: La API (Lo "Fácil")</h1>
+        <h2>Conexión con AEMET OpenData</h2>
+        <div class="split-content">
+            <div class="text-side">
+                <p>El objetivo: Cruzar datos de salud con el clima de Madrid.</p>
+                <p>Usé la librería <code>requests</code> para atacar el endpoint oficial.</p>
+                <div class="highlight-box">
+                    <strong>Reto:</strong> La API requiere doble llamada (una para el token, otra para el dato).
+                </div>
+            </div>
+            <div class="text-side">
+                <div class="code-snippet">
+response = requests.get(url_api)<br>
+data = response.json()<br>
+# JSON estructurado ✅<br>
+# Sin valores nulos ✅
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide4">
+        <h1>Fase 1: Web Scraping (El Reto)</h1>
+        <h2>Cuando la web no colabora...</h2>
+        <div class="split-content">
+            <div class="text-side">
+                <p>Necesitaba datos que no estaban en la API. Fui a la web de previsión.</p>
+                <p><strong>Problema:</strong> La tabla HTML era un caos. Sin `thead` ni `tbody`. Solo filas `tr` sueltas.</p>
+                <p>Tuve que aplicar <strong>programación defensiva</strong>:</p>
+            </div>
+            <div class="text-side">
+                <div class="code-snippet" style="color: #FFAB91;">
+soup.find_all('tr') # Iterar todo<br>
+try:<br>
+&nbsp;&nbsp;limpiar_celda(row)<br>
+except:<br>
+&nbsp;&nbsp;pass # Skip headers rotos
+                </div>
+                <p style="font-size: 1rem; margin-top: 10px;">Resultado: Un DataFrame robusto a prueba de cambios.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide5">
+        <h1>Fase 2: Limpieza Médica</h1>
+        <p>Aquí es donde el conocimiento de dominio importa más que el código.</p>
+        <div class="split-content">
+            <div class="highlight-box" style="flex:1;">
+                <h3>1. Imputación Inteligente</h3>
+                <p>En 'Income' usé la <strong>MEDIANA</strong>. La media es sensible a millonarios (outliers). La mediana representa al paciente real.</p>
+            </div>
+            <div class="highlight-box" style="flex:1; border-color: #AB47BC;">
+                <h3>2. Split Tensión Arterial</h3>
+                <p>Dato original: "120/80".<br>Esto es texto, no número.<br>Lo separé en <strong>'Sistólica'</strong> y <strong>'Diastólica'</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide6">
+        <h1>El Asesino Silencioso del Modelo</h1>
+        <h2>Dataset Desbalanceado</h2>
+        <div class="split-content">
+            <div class="text-side">
+                <p>Al analizar la variable objetivo (Infarto Sí/No), vi esto:</p>
+                <ul>
+                    <li>Casi todos eran "Sanos" (Clase 0).</li>
+                    <li>Muy pocos "Infartos" (Clase 1).</li>
+                </ul>
+                <p><strong>Riesgo:</strong> El modelo aprende a ser vago. Dice siempre "Sano" y acierta el 90%, pero falla el 100% de los infartos.</p>
+            </div>
+            <div class="chart-side" id="chartPieBad"></div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide7">
+        <h1>La Solución: SMOTE</h1>
+        <h2>Synthetic Minority Over-sampling Technique</h2>
+        <div class="split-content">
+            <div class="text-side">
+                <p>No eliminé datos sanos (perdería info). Creé datos sintéticos de enfermos.</p>
+                <p>Usé algoritmos de vecinos cercanos (KNN) para generar nuevos casos plausibles.</p>
+                <div class="highlight-box">
+                    Resultado: <strong>Balanceo 50/50</strong>. Ahora el modelo está obligado a aprender.
+                </div>
+            </div>
+            <div class="chart-side" id="chartPieGood"></div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide8">
+        <h1>Fase 3: Insights (Correlaciones)</h1>
+        <p>¿Qué variables están realmente conectadas?</p>
+        <div class="split-content">
+            <div class="chart-side" id="chartMatrix"></div>
+            <div class="text-side">
+                <ul>
+                    <li><strong>Income (Ingresos):</strong> Correlación cercana a 0. El dinero no protege del infarto.</li>
+                    <li><strong>Edad y Colesterol:</strong> Alta correlación positiva.</li>
+                    <li><strong>Ejercicio:</strong> Correlación negativa (protector).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide9">
+        <h1>Segmentación de Riesgo</h1>
+        <div class="split-content">
+            <div class="text-side">
+                <h3>Cluster de Peligro</h3>
+                <p>En este gráfico de dispersión vemos claramente el perfil de riesgo.</p>
+                <p>A partir de los <strong>50 años</strong> y con <strong>Colesterol > 240</strong>, el riesgo se dispara (puntos oscuros).</p>
+            </div>
+            <div class="chart-side" id="chartScatter"></div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide10">
+        <h1>Mito vs Realidad: Ingresos</h1>
+        <div class="split-content">
+            <div class="chart-side" id="chartBar"></div>
+            <div class="text-side">
+                <p>Mucha gente piensa que la salud es cosa de ricos.</p>
+                <p>Mis datos demuestran que la distribución de infartos es <strong>idéntica</strong> en rentas altas y bajas.</p>
+                <div class="highlight-box">
+                    <strong>Decisión:</strong> Las campañas de prevención deben ser universales, no segmentadas por poder adquisitivo.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide11">
+        <h1>Conclusiones Finales</h1>
+        <div class="split-content">
+            <div class="text-side">
+                <h3>Técnicas</h3>
+                <ul>
+                    <li>El <strong>Scraping defensivo</strong> es vital cuando la fuente es inestable.</li>
+                    <li>Sin <strong>SMOTE</strong>, este proyecto habría fallado matemáticamente.</li>
+                </ul>
+            </div>
+            <div class="text-side">
+                <h3>De Negocio</h3>
+                <ul>
+                    <li>Hemos identificado el <strong>Target 50+</strong>.</li>
+                    <li>Descartamos variables irrelevantes (Ingresos) para optimizar marketing.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide12">
+        <h1>Gracias</h1>
+        <p>¿Alguna pregunta sobre el código o la estrategia?</p>
+        <div style="font-size: 5rem; text-align: center; margin-top: 50px;">❤️</div>
+    </div>
+
+    <div class="nav-buttons">
+        <button onclick="prevSlide()" id="btnPrev">Anterior</button>
+        <button onclick="nextSlide()" id="btnNext">Siguiente</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 12;
+
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.getElementById('slide' + n).classList.add('active');
+            
+            if(n === 6) renderPieBad();
+            if(n === 7) renderPieGood();
+            if(n === 8) renderMatrix();
+            if(n === 9) renderScatter();
+            if(n === 10) renderBar();
+
+            document.getElementById('btnPrev').disabled = n === 1;
+            document.getElementById('btnNext').disabled = n === totalSlides;
+        }
+
+        function nextSlide() { if(currentSlide < totalSlides) { currentSlide++; showSlide(currentSlide); } }
+        function prevSlide() { if(currentSlide > 1) { currentSlide--; showSlide(currentSlide); } }
+
+        // PLOTLY CHARTS
+        function renderPieBad() {
+            Plotly.newPlot('chartPieBad', [{values: [90, 10], labels: ['Sanos', 'Infartos'], type: 'pie', marker: {colors: ['#F8BBD0', '#C2185B']}}], {title: 'Antes de SMOTE'}, {staticPlot: true});
+        }
+        function renderPieGood() {
+            Plotly.newPlot('chartPieGood', [{values: [50, 50], labels: ['Sanos', 'Infartos (Sintéticos)'], type: 'pie', marker: {colors: ['#F8BBD0', '#880E4F']}}], {title: 'Después de SMOTE'}, {staticPlot: true});
+        }
+        function renderMatrix() {
+            var z = [[1, 0.1, 0.8, -0.4], [0.1, 1, 0.0, 0.1], [0.8, 0.0, 1, -0.3], [-0.4, 0.1, -0.3, 1]];
+            Plotly.newPlot('chartMatrix', [{z: z, x: ['Edad', 'Ingresos', 'Colesterol', 'Deporte'], y: ['Edad', 'Ingresos', 'Colesterol', 'Deporte'], type: 'heatmap', colorscale: 'PuRd'}], {title: 'Correlaciones'}, {displayModeBar: false});
+        }
+        function renderScatter() {
+            var t1 = {x: [30, 40, 35], y: [180, 200, 190], mode: 'markers', name: 'Sanos', marker:{color:'#F48FB1'}};
+            var t2 = {x: [55, 65, 70], y: [250, 280, 260], mode: 'markers', name: 'Riesgo', marker:{color:'#880E4F', size: 12}};
+            Plotly.newPlot('chartScatter', [t1, t2], {title: 'Edad vs Colesterol', xaxis:{title:'Edad'}, yaxis:{title:'Colesterol'}}, {displayModeBar: false});
+        }
+        function renderBar() {
+            Plotly.newPlot('chartBar', [{x: ['Renta Baja', 'Renta Alta'], y: [45, 48], type: 'bar', marker:{color: '#EC407A'}}], {title: 'Casos de Infarto por Renta', yaxis:{title:'Cantidad de Casos'}}, {displayModeBar: false});
+        }
+
+        showSlide(1);
+        document.addEventListener('keydown', e => { if(e.key==="ArrowRight") nextSlide(); if(e.key==="ArrowLeft") prevSlide(); });
+    </script>
+</body>
+</html>
